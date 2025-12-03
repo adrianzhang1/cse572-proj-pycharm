@@ -22,6 +22,13 @@ item_sim_df = pd.DataFrame(item_sim, index=item_labels, columns=item_labels)
 
 print(item_sim_df.head())
 
+support_counts = df.sum(axis=0)  # Series, index = hex bins
+# Apply support weighting
+weight_matrix = np.sqrt(np.outer(support_counts, support_counts))
+weighted_sim = item_sim_df.values * weight_matrix
+
+item_sim_df_weighted = pd.DataFrame(weighted_sim, index=df.columns, columns=df.columns)
+item_sim_df_weighted.to_csv("item_item_similarity_weighted_dim32.csv")
 def top_similar_colors(hex_color, k=10):
     if hex_color not in item_sim_df.index:
         raise ValueError(f"Color {hex_color} not found in data.")

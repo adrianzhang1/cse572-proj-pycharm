@@ -83,10 +83,6 @@ print("Pass 1 complete.")
 used_bins = np.where(nonzero_global)[0]
 print(f"Total non-zero global bins: {len(used_bins)}")
 
-
-# ---------------------------
-# PASS 2: Write compact CSV
-# ---------------------------
 out_file = f"kimono_LAB_histograms_dim{DIMENSION}_compact.csv"
 
 with open(out_file, "w") as f:

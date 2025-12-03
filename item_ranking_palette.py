@@ -1,10 +1,7 @@
-
 import pandas as pd
-from openai import OpenAI
 import numpy as np
 
-CSV_PATH = "item_item_similarity_dim32.csv"   # change if needed
-
+CSV_PATH = "item_item_similarity_weighted_dim32.csv"   # change if needed
 
 def load_similarity(path):
     df = pd.read_csv(path, index_col=0)
@@ -16,9 +13,7 @@ SIM = load_similarity(CSV_PATH)
 
 def generate_random_palette(sim_matrix, palette_size=5, top_k=20):
     """
-    sim_matrix: pandas DataFrame of item-item similarities
-    palette_size: number of colors to generate
-    top_k: number of top similar colors to pick from at each step
+    uses a random walk to create a color palette
     """
     all_colors = sim_matrix.index.tolist()
 
@@ -45,12 +40,10 @@ def generate_random_palette(sim_matrix, palette_size=5, top_k=20):
     return palette
 def generate_balanced_palette(sim_matrix, starting_color=None, palette_size=5, top_k=20):
     """
-    Generate a random but cohesive palette based on item-based CF.
-
-    sim_matrix: pandas DataFrame of item-item similarities
-    palette_size: number of colors to generate
-    top_k: number of top candidates to sample from at each step
+    attempts to maximize the next color's affinity with previous colors generated.
+    Next color is chosen from top k affinities from the product of all previous affinities
     """
+
     all_colors = sim_matrix.index.tolist()
 
     # Start with a random color
@@ -86,13 +79,7 @@ def generate_balanced_palette(sim_matrix, starting_color=None, palette_size=5, t
 
     return palette
 def generate_very_balanced_palette(sim_matrix, starting_color=None, palette_size=5, top_k=20):
-    """
-    Generate a random but cohesive palette based on item-based CF.
 
-    sim_matrix: pandas DataFrame of item-item similarities
-    palette_size: number of colors to generate
-    top_k: number of top candidates to sample from at each step
-    """
     all_colors = sim_matrix.index.tolist()
 
     # Start with a random color
@@ -105,9 +92,9 @@ def generate_very_balanced_palette(sim_matrix, starting_color=None, palette_size
     for _ in range(palette_size - 1):
         print(top_k)
         # Compute cumulative score for all candidates
-        scores = np.zeros(len(sim_matrix))
+        scores = np.ones(len(sim_matrix))
         for c in palette:
-            scores += sim_matrix.loc[c].values
+            scores *= sim_matrix.loc[c].values
 
         candidates = np.array(all_colors)
 
@@ -128,18 +115,6 @@ def generate_very_balanced_palette(sim_matrix, starting_color=None, palette_size
         palette.append(next_color)
 
         top_k = int(top_k / 1.25) + 10
-
-        client = OpenAI(api_key='replace')
-
-        prompt = f"""
-        Evaluate the color palette for a kimono:
-        {palette}
-        Give a 1-10 aesthetic rating and notes on the colory harmony
-        """
-
-        response = client.chat.completions.create(model="gpt-4.1", messages=[{"role": "user", "content": prompt}])
-
-        print(response.choices[0].message.content)
 
     return palette
 
@@ -163,8 +138,8 @@ def show_palette(palette, title=None):
 
 for i in range(10):
     palette = generate_very_balanced_palette(SIM,
-                                        starting_color='#2129FF',
-                                        palette_size=10, top_k=250)
+                                        # starting_color='#EEFD50',
+                                        palette_size=10, top_k=240)
     print("Generated palette:", palette)
     show_palette(palette,f"{i}")
 
