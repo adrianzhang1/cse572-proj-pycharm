@@ -129,6 +129,18 @@ def generate_very_balanced_palette(sim_matrix, starting_color=None, palette_size
 
         top_k = int(top_k / 1.25) + 10
 
+        client = OpenAI(api_key='replace')
+
+        prompt = f"""
+        Evaluate the color palette for a kimono:
+        {palette}
+        Give a 1-10 aesthetic rating and notes on the colory harmony
+        """
+
+        response = client.chat.completions.create(model="gpt-4.1", messages=[{"role": "user", "content": prompt}])
+
+        print(response.choices[0].message.content)
+
     return palette
 
 import matplotlib.pyplot as plt
@@ -155,18 +167,6 @@ for i in range(10):
                                         palette_size=10, top_k=250)
     print("Generated palette:", palette)
     show_palette(palette,f"{i}")
-
-    client = OpenAI(api_key='replace')
-
-    prompt = f"""
-    Evaluate the color palette for a kimono:
-    {palette}
-    Give a 1-10 aesthetic rating and notes on the colory harmony
-    """
-
-    response = client.chat.completions.create(model="gpt-4.1", messages=[{"role": "user", "content": prompt}])
-
-    print(response.choices[0].message.content)
 
 
 
