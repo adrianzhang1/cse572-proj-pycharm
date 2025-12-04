@@ -20,7 +20,7 @@ connection_mining.py
 feature_vects.py
 - requires kimono images in /Kimono_Images/image{image_number}.jpg
 - requires oklab_conv.py
-- creates feature
+- creates kimono_LAB_histograms_dim32_compact.csv
 - DIMENSION = 32: the dimension of the discretization space being used.
 - RAND_CUTOFF = 0.8: the proportion of pixels to ignore (in order to speed up the running time)
 - NUM_BUCKETS = DIMENSION ** 3
