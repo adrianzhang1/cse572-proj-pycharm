@@ -3,7 +3,7 @@
 ## Files:
 color_network.py
 - requires a connection_matrix.csv created by connection_mining.py
-- creates a html file using pyvis.network that shows pairwise color connections.
+- creates a html network visualizer using pyvis.network that shows pairwise color connections.
 - NUM_PALETTES: number of kimonos to analyze
 - NODE_SCALE: the size of nodes
 - EDGE_WEIGHT_SCALE: how much to increase the weight of the edge if the number of connections increases
@@ -17,5 +17,22 @@ connection_mining.py
 - connection_matrix.csv is a csv containing pairwise affinity scores for all colors across all kimonos. This score was calculated as such: given a kimono with x pixels of color A and y pixels of color B, a score of xy is added to the cumulative A x B color affinity score.
 - Colors are chosen by bucketing the entirety of RGB space into DIMENSION^3 number of buckets. All colors within a bucket are counted as occurences of that bucket's color.
 
+feature_vects.py
+- requires kimono images in /Kimono_Images/image{image_number}.jpg
+- requires oklab_conv.py
+- creates feature
+- DIMENSION = 32: the dimension of the discretization space being used.
+- RAND_CUTOFF = 0.8: the proportion of pixels to ignore (in order to speed up the running time)
+- NUM_BUCKETS = DIMENSION ** 3
+- N_IMAGES = 4500: the number of kimonos to consider
+- Creates a csv file containing feature vectors generated for each kimono. For each kimono, we count the occurences of pixel values occuring in discrete buckets. Buckets are uniformly distributed in the OKLab color space rather than RGB color space. Most of the possible values in OKLab are invalid colors that do not exist in our color perception. As such, using dimension 32, out of 32768 possible values, only about 2400 of those buckets are filled with any color.
 
+item_ranking.py
+- requires kimono_LAB_histograms_dim32_compact.csv created by feature_vects.py
+- created "item_item_similarity_dim32.csv"
+- creates "item_item_similarity_weighted_dim32.csv"
+- creates a similarity matrix for all colors using user-based collaborative filtering. Optional features include weighting each similarity score by the geometric mean of the support. The goal is to eliminate noisy and abnormally large similarity values for colors where there does not exist good data.
 
+item_ranking_palette.py
+- requires any similarity matrix, "item_item_similarity_weighted_dim32.csv" is currently used
+- creates 10 random palettes given an item similarity matrix. The method used to generate palettes can be changed
