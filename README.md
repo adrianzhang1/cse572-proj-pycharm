@@ -1,7 +1,7 @@
 # Color Harmony Project
 
-Files:
-## color_network.py
+## Files:
+color_network.py
 - requires a connection_matrix.csv created by connection_mining.py
 - creates a html file using pyvis.network that shows pairwise color connections.
 - NUM_PALETTES: number of kimonos to analyze
