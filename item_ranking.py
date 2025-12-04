@@ -37,9 +37,10 @@ def top_similar_colors(hex_color, k=10):
     return row.drop(hex_color).nlargest(k)
 
 if __name__ == "__main__":
-    # Pick any LAB-bin hex in dataset
-    example_hex = item_labels[100]  # or put "#8F4A33" or any known value
+    # Pick some LAB-bin hex in dataset
+    example_hex = item_labels[100]
 
     print(f"\nTop similar colors to {example_hex}:")
     print(top_similar_colors(example_hex, k=10))
+
 
