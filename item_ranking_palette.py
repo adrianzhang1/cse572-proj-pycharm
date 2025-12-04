@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from openai import OpenAI
 
 CSV_PATH = "item_item_similarity_weighted_dim32.csv"   # change if needed
 
@@ -115,6 +116,18 @@ def generate_very_balanced_palette(sim_matrix, starting_color=None, palette_size
         palette.append(next_color)
 
         top_k = int(top_k / 1.25) + 10
+
+        client = OpenAI(api_key='replace')
+
+        prompt = f"""
+                Evaluate the color palette for a kimono:
+                {palette}
+                Give a 1-10 aesthetic rating and notes on the colory harmony
+                """
+
+        response = client.chat.completions.create(model="gpt-4.1", messages=[{"role": "user", "content": prompt}])
+
+        print(response.choices[0].message.content)
 
     return palette
 
